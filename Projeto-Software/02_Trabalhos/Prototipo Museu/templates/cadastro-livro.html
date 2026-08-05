@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Livro - Museu Treze</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f8f5f;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            width: 500px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #1f8f5f;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #d9d9d9;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            border: 1px solid #0b3d2e;
+            background-color: #121212;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #1f8f5f;
+            box-shadow: 0px 0px 5px #1f8f5f;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #0b3d2e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #1f8f5f; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${livro.id != null ? 'Editar Livro' : 'Cadastro de Livro'}">Cadastro de Livro</h1>
+
+<div class="container">
+
+    <p class="mensagem" th:text="${mensagem}"></p>
+
+    <form action="/salvarLivro" method="post">
+
+        <!-- Campo hidden: presente só na edição -->
+        <input type="hidden" name="id" th:value="${livro.id}">
+
+        <label>Título:</label>
+        <input type="text" name="titulo" placeholder="Título do livro" th:value="${livro.titulo}">
+
+        <label>ISBN:</label>
+        <input type="text" name="isbn" placeholder="Ex: 978-3-16-148410-0" th:value="${livro.isbn}">
+
+        <label>Editora:</label>
+        <input type="text" name="editora" placeholder="Nome da editora" th:value="${livro.editora}">
+
+        <label>Ano de Publicação:</label>
+        <input type="number" name="ano_publicacao" placeholder="Ex: 2005" th:value="${livro.ano_publicacao}">
+
+        <label>Quantidade:</label>
+        <input type="number" name="quantidade" placeholder="1" min="1" th:value="${livro.quantidade}">
+
+        <button type="submit" th:text="${livro.id != null ? 'Salvar Alterações' : 'Cadastrar Livro'}">Cadastrar Livro</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

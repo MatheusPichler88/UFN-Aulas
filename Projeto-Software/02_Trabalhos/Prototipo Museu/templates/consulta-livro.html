@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Livros - Museu Treze</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f8f5f;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #0b3d2e;
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border: 1px solid #1f8f5f;
+            box-shadow: 0px 0px 5px #1f8f5f;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-buscar {
+            background-color: #0b3d2e;
+            color: white;
+        }
+
+        .btn-buscar:hover { background-color: #1f8f5f; }
+
+        .btn-novo {
+            background-color: #1f8f5f;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-novo:hover { background-color: #27b87a; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead tr { background-color: #0b3d2e; }
+
+        thead th {
+            color: #d9d9d9;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #222;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover { background-color: #202020; }
+
+        tbody td {
+            padding: 11px 14px;
+            color: #d9d9d9;
+        }
+
+        .qtd-badge {
+            display: inline-block;
+            background-color: #0b3d2e;
+            color: #1f8f5f;
+            font-weight: bold;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            border: 1px solid #1f8f5f;
+        }
+
+        .acoes { display: flex; gap: 8px; }
+
+        .btn-editar, .btn-excluir {
+            padding: 5px 14px;
+            border-radius: 5px;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-editar  { background-color: #0b3d2e; color: white; }
+        .btn-editar:hover  { background-color: #1f8f5f; }
+        .btn-excluir { background-color: #3d0b0b; color: white; }
+        .btn-excluir:hover { background-color: #8f1f1f; }
+
+        .sem-dados {
+            text-align: center;
+            color: #555;
+            padding: 40px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Consulta de Livros</h1>
+
+<div class="container">
+
+    <div class="toolbar">
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar por título, ISBN ou editora...">
+            <button class="btn btn-buscar">Buscar</button>
+        </div>
+        <a href="/cadastroLivro" class="btn btn-novo">+ Novo Livro</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>ISBN</th>
+                <th>Editora</th>
+                <th>Ano</th>
+                <th>Quantidade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="livro : ${livros}">
+                <td th:text="${livro.id}"></td>
+                <td th:text="${livro.titulo}"></td>
+                <td th:text="${livro.isbn}"></td>
+                <td th:text="${livro.editora}"></td>
+                <td th:text="${livro.ano_publicacao}"></td>
+                <td><span class="qtd-badge" th:text="${livro.quantidade}"></span></td>
+                <td class="acoes">
+                    <a th:href="@{/editarLivro/{id}(id=${livro.id})}">
+                        <button class="btn-editar">Editar</button>
+                    </a>
+                    <a th:href="@{/excluirLivro/{id}(id=${livro.id})}"
+                       onclick="return confirm('Deseja excluir este livro?')">
+                        <button class="btn-excluir">Excluir</button>
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(livros)}">
+                <td colspan="7" class="sem-dados">Nenhum livro cadastrado.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

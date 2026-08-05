@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathLab — Sistemas Lineares</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg:       #0d0f14;
+            --surface:  #13161e;
+            --surface2: #1a1e28;
+            --border:   #252a38;
+            --border2:  #2e3547;
+            --accent:   #4f8ef7;
+            --accent2:  #6aa3ff;
+            --green:    #3ecf8e;
+            --amber:    #f59e0b;
+            --red:      #f87171;
+            --text:     #e2e8f0;
+            --muted:    #64748b;
+            --muted2:   #94a3b8;
+            --mono:     'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .topbar {
+            border-bottom: 1px solid var(--border);
+            background: rgba(13,15,20,0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 0;
+        }
+        .topbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+        .logo-icon svg { width: 16px; height: 16px; fill: #fff; }
+        .logo-name { font-size: 1rem; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+        .logo-sub  { font-size: 0.68rem; color: var(--muted); font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; }
+        .badge-version {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border2);
+            color: var(--muted2);
+            background: var(--surface2);
+        }
+
+        .page-wrapper { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        .page-header { margin-bottom: 40px; }
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin: 0 0 6px;
+        }
+        .page-header p { color: var(--muted2); font-size: 0.95rem; margin: 0; }
+        .accent-line { color: var(--accent); }
+
+        .ml-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+        .ml-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+        .ml-card-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+        .dot-amber { background: var(--amber); }
+        .ml-card-body { padding: 22px; }
+
+        .form-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--muted2);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .form-control, .form-select {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            padding: 10px 14px;
+            font-family: inherit;
+            width: 100%;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .form-control:focus, .form-select:focus {
+            background: var(--surface2);
+            border-color: var(--accent);
+            color: var(--text);
+            box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+            outline: none;
+        }
+        .form-select option { background: var(--surface2); color: var(--text); }
+        .form-control::placeholder { color: var(--muted); }
+
+        .matrix-wrap { overflow-x: auto; padding: 4px 0 12px; }
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .matrix-cell {
+            width: 72px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            padding: 8px 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 6px;
+            color: var(--text);
+            transition: border-color 0.15s;
+        }
+        .matrix-cell:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(79,142,247,0.15);
+        }
+        .matrix-cell.b-col {
+            border-color: var(--accent);
+            background: rgba(79,142,247,0.07);
+            color: var(--accent2);
+        }
+        .matrix-cell.b-col:focus {
+            border-color: var(--accent2);
+            box-shadow: 0 0 0 2px rgba(79,142,247,0.2);
+        }
+        .matrix-sep {
+            font-family: var(--mono);
+            font-size: 1rem;
+            color: var(--muted);
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .btn-primary-ml {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            margin-top: 4px;
+        }
+        .btn-primary-ml:hover { background: var(--accent2); }
+        .btn-primary-ml:active { transform: scale(0.995); }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--muted2);
+            border-radius: 6px;
+            padding: 5px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+        .btn-outline-acc {
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--muted2);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .btn-outline-acc:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,142,247,0.05); }
+
+        .result-card {
+            background: var(--surface);
+            border: 1px solid var(--green);
+            border-radius: 12px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .result-header {
+            background: rgba(62,207,142,0.07);
+            border-bottom: 1px solid rgba(62,207,142,0.2);
+            padding: 13px 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .result-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(62,207,142,0.5);
+        }
+        .result-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--green);
+        }
+
+        .info-row { display: flex; gap: 28px; flex-wrap: wrap; margin-bottom: 22px; }
+        .info-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+        .badge-ml { display: inline-block; font-family: var(--mono); font-size: 0.75rem; padding: 3px 10px; border-radius: 4px; font-weight: 500; }
+        .badge-accent { background: rgba(79,142,247,0.15); color: var(--accent2); }
+        .badge-dark   { background: var(--surface2); color: var(--muted2); border: 1px solid var(--border2); }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px,1fr));
+            gap: 10px;
+        }
+        .solution-var {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .solution-var-name { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 3px; }
+        .solution-var-value { font-family: var(--mono); font-size: 0.95rem; font-weight: 500; color: var(--text); }
+
+        .ml-alert-danger {
+            background: rgba(248,113,113,0.08);
+            border: 1px solid rgba(248,113,113,0.3);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: var(--red);
+            font-size: 0.88rem;
+            margin-top: 20px;
+        }
+        .ml-alert-warning {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--amber);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .compare-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.86rem; }
+        .compare-table thead th {
+            padding: 10px 16px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        .compare-table tbody tr:hover { background: var(--surface2); }
+        .compare-table tbody td {
+            padding: 11px 16px;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            font-family: var(--mono);
+            font-size: 0.8rem;
+        }
+        .compare-table tbody td:first-child { font-family: 'DM Sans',sans-serif; font-weight: 600; color: var(--muted2); }
+        .compare-table tbody tr:last-child td { border-bottom: none; }
+        .status-ok   { color: var(--green); }
+        .status-fail { color: var(--red); }
+
+        .section-div { display: flex; align-items: center; gap: 12px; margin: 36px 0 24px; }
+        .section-div-line { flex: 1; height: 1px; background: var(--border); }
+        .section-div-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); white-space: nowrap; }
+
+        footer { border-top: 1px solid var(--border); padding: 22px; text-align: center; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.02em; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+        @media (max-width: 600px) {
+            .page-header h1 { font-size: 1.5rem; }
+            .ml-card-body { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="topbar">
+    <div class="topbar-inner">
+        <a class="logo" href="#">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm13 0a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="logo-name">MathLab</div>
+                <div class="logo-sub">Calculo Numerico</div>
+            </div>
+        </a>
+        <span class="badge-version">v1.0.0</span>
+    </div>
+</nav>
+
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <h1>Sistemas Lineares <span class="accent-line">Ax = b</span></h1>
+        <p>Resolucao numerica por Eliminacao de Gauss, Jacobi e Gauss-Seidel.</p>
+    </div>
+
+    <form th:action="@{/resolver}" th:object="${sistema}" method="post">
+
+        <div class="ml-card">
+            <div class="ml-card-header">
+                <span class="ml-card-title"><span class="dot"></span>Parametros do Sistema</span>
+            </div>
+            <div class="ml-card-body">
+                <div class="row g-3">
+                    <div class="col-sm-2">
+                        <label class="form-label">Tamanho (n)</label>
+                        <input type="number" th:field="*{tamanho}" id="campoTamanho"
+                               class="form-control" min="2" max="10"
+                               oninput="atualizarGrade(this.value)">
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label">Metodo de Resolucao</label>
+                        <select th:field="*{metodo}" class="form-select">
+                            <option value="gauss">Eliminacao de Gauss</option>
+                            <option value="jacobi">Metodo de Jacobi</option>
+                            <option value="seidel">Gauss-Seidel</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label">Tolerancia (e)</label>
+                        <input type="number" th:field="*{tolerancia}" class="form-control" step="any">
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label">Max. Iteracoes</label>
+                        <input type="number" th:field="*{maxIteracoes}" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ml-card">
+            <div class="ml-card-header">
+                <span class="ml-card-title"><span class="dot"></span>Matriz A / Vetor b</span>
+                <button type="button" class="btn-ghost" onclick="limparMatriz()">Limpar</button>
+            </div>
+            <div class="ml-card-body">
+                <div class="matrix-wrap text-center">
+                    <div id="matrizContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="hiddenFields" style="display:none">
+            <div th:each="i : ${#numbers.sequence(0, 9)}">
+                <div th:each="j : ${#numbers.sequence(0, 9)}">
+                    <input type="number" step="any"
+                           th:field="*{matrizA[__${i}__][__${j}__]}"
+                           th:id="'hA_' + ${i} + '_' + ${j}">
+                </div>
+            </div>
+            <div th:each="i : ${#numbers.sequence(0, 9)}">
+                <input type="number" step="any"
+                       th:field="*{vetorB[__${i}__]}"
+                       th:id="'hB_' + ${i}">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary-ml">Calcular Solucao</button>
+    </form>
+
+    <div th:if="${erro}" class="ml-alert-danger">
+        <strong>Erro:</strong> <span th:text="${erro}"></span>
+    </div>
+
+    <div th:if="${resultado}" class="result-card">
+        <div class="result-header">
+            <span class="result-dot"></span>
+            <span class="result-title">Solucao Encontrada</span>
+        </div>
+        <div class="ml-card-body">
+            <div th:if="${avisoConvergencia}" class="ml-alert-warning">
+                <span th:text="${avisoConvergencia}"></span>
+            </div>
+            <div class="info-row">
+                <div>
+                    <div class="info-label">Metodo</div>
+                    <span class="badge-ml badge-accent" th:text="${sistema.metodo}"></span>
+                </div>
+                <div>
+                    <div class="info-label">Iteracoes</div>
+                    <span class="badge-ml badge-dark" th:text="${sistema.iteracoesRealizadas}"></span>
+                </div>
+            </div>
+            <div class="info-label" style="margin-bottom:12px;">Vetor Solucao — x</div>
+            <div class="solution-grid">
+                <div th:each="val, stat : ${resultado}" class="solution-var">
+                    <div class="solution-var-name" th:text="'x' + ${stat.count}"></div>
+                    <div class="solution-var-value" th:text="${#numbers.formatDecimal(val, 1, 6)}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-div">
+        <div class="section-div-line"></div>
+        <span class="section-div-label">Analise Comparativa</span>
+        <div class="section-div-line"></div>
+    </div>
+
+    <div class="ml-card">
+        <div class="ml-card-header">
+            <span class="ml-card-title"><span class="dot dot-amber"></span>Comparacao de Metodos</span>
+        </div>
+        <div class="ml-card-body">
+            <button type="button" class="btn-outline-acc" onclick="executarComparacao()">
+                Simular todos os metodos
+            </button>
+            <div id="comparacaoResultado" style="display:none">
+                <div style="overflow-x:auto;">
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th>Metodo</th>
+                                <th>Solucao Aproximada</th>
+                                <th>Ciclos</th>
+                                <th>Convergiu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparacaoCorpo"></tbody>
+                    </table>
+                </div>
+                <div id="comparacaoAnalise" class="ml-alert-warning mt-3" style="display:none"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    CC &mdash; Projeto Calculo Numerico &copy; 2026
+</footer>
+
+<script>
+    function atualizarGrade(n) {
+        n = parseInt(n) || 2;
+        const container = document.getElementById('matrizContainer');
+        container.innerHTML = '';
+
+        for (let i = 0; i < n; i++) {
+            const row = document.createElement('div');
+            row.className = 'matrix-row';
+
+            for (let j = 0; j < n; j++) {
+                const inp = document.createElement('input');
+                inp.type = 'number'; inp.step = 'any'; inp.className = 'matrix-cell';
+                inp.placeholder = '0';
+                inp.id = 'vis_A_' + i + '_' + j;
+                inp.addEventListener('input', () => {
+                    document.getElementById('hA_' + i + '_' + j).value = inp.value;
+                });
+                const cur = document.getElementById('hA_' + i + '_' + j).value;
+                if (cur && cur !== '0') inp.value = cur;
+                row.appendChild(inp);
+            }
+
+            const sep = document.createElement('span');
+            sep.className = 'matrix-sep'; sep.textContent = '=';
+            row.appendChild(sep);
+
+            const inpB = document.createElement('input');
+            inpB.type = 'number'; inpB.step = 'any'; inpB.className = 'matrix-cell b-col';
+            inpB.placeholder = '0';
+            inpB.id = 'vis_B_' + i;
+            inpB.addEventListener('input', () => {
+                document.getElementById('hB_' + i).value = inpB.value;
+            });
+            const curB = document.getElementById('hB_' + i).value;
+            if (curB && curB !== '0') inpB.value = curB;
+            row.appendChild(inpB);
+            container.appendChild(row);
+        }
+    }
+
+    function limparMatriz() {
+        document.querySelectorAll('.matrix-cell').forEach(i => i.value = '');
+        document.querySelectorAll('#hiddenFields input').forEach(i => i.value = '0');
+    }
+
+    function gaussJS(A, b, n) {
+        const M = A.map((row, i) => [...row, b[i]]);
+        for (let i = 0; i < n; i++) {
+            let max = i;
+            for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[max][i])) max = k;
+            [M[i], M[max]] = [M[max], M[i]];
+            if (Math.abs(M[i][i]) < 1e-12) return { ok: false };
+            for (let j = i + 1; j < n; j++) {
+                const f = M[j][i] / M[i][i];
+                for (let k = i; k <= n; k++) M[j][k] -= f * M[i][k];
+            }
+        }
+        const x = new Array(n).fill(0);
+        for (let i = n - 1; i >= 0; i--) {
+            let s = M[i][n];
+            for (let j = i + 1; j < n; j++) s -= M[i][j] * x[j];
+            x[i] = s / M[i][i];
+        }
+        return { ok: true, x, iter: 1, conv: true };
+    }
+
+    function jacobiJS(A, b, n, tol, maxIter) {
+        let x = new Array(n).fill(0), xN = new Array(n).fill(0), k = 0;
+        for (k = 0; k < maxIter; k++) {
+            for (let i = 0; i < n; i++) {
+                let s = b[i];
+                for (let j = 0; j < n; j++) if (i !== j) s -= A[i][j] * x[j];
+                xN[i] = s / A[i][i];
+            }
+            if (Math.max(...x.map((v, i) => Math.abs(xN[i] - v))) < tol) { k++; break; }
+            x = [...xN];
+        }
+        return { ok: true, x: xN, iter: k, conv: k < maxIter };
+    }
+
+    function seidelJS(A, b, n, tol, maxIter) {
+        let x = new Array(n).fill(0), k = 0;
+        for (k = 0; k < maxIter; k++) {
+            const xAnt = [...x];
+            for (let i = 0; i < n; i++) {
+                let s = b[i];
+                for (let j = 0; j < n; j++) if (i !== j) s -= A[i][j] * x[j];
+                x[i] = s / A[i][i];
+            }
+            if (Math.max(...x.map((v, i) => Math.abs(xAnt[i] - v))) < tol) { k++; break; }
+        }
+        return { ok: true, x, iter: k, conv: k < maxIter };
+    }
+
+    function executarComparacao() {
+        const n = parseInt(document.getElementById('campoTamanho').value);
+        const A = [], b = [];
+        for (let i = 0; i < n; i++) {
+            A[i] = [];
+            for (let j = 0; j < n; j++) A[i][j] = parseFloat(document.getElementById('vis_A_'+i+'_'+j).value) || 0;
+            b[i] = parseFloat(document.getElementById('vis_B_'+i).value) || 0;
+        }
+        const tol = 0.0001, max = 100;
+        const res = [
+            { n: 'Eliminacao de Gauss', r: gaussJS(A, b, n) },
+            { n: 'Jacobi',              r: jacobiJS(A, b, n, tol, max) },
+            { n: 'Gauss-Seidel',        r: seidelJS(A, b, n, tol, max) }
+        ];
+        const corpo = document.getElementById('comparacaoCorpo');
+        corpo.innerHTML = '';
+        res.forEach(item => {
+            const conv = item.r.conv
+                ? '<span class="status-ok">Sim</span>'
+                : '<span class="status-fail">Nao</span>';
+            const sol = item.r.ok ? item.r.x.map(v => v.toFixed(4)).join('  |  ') : 'N/A';
+            corpo.innerHTML += `<tr>
+                <td>${item.n}</td>
+                <td>${sol}</td>
+                <td>${item.r.iter}</td>
+                <td>${conv}</td>
+            </tr>`;
+        });
+        document.getElementById('comparacaoResultado').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        atualizarGrade(document.getElementById('campoTamanho').value);
+    });
+</script>
+</body>
+</html>

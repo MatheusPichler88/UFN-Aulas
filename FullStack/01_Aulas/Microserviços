@@ -1,0 +1,21 @@
+Quando voltar, só precisa rodar os 3 terminais de novo:
+Terminal 1 — Auth Service:
+
+bashcd auth-service
+node index.js
+
+
+Terminal 2 — Note Service:
+bashcd note-service
+
+MONGO_URI=mongodb+srv://admin:1234@cluster1.1amjv8g.mongodb.net/notas node index.js
+
+
+
+Terminal 3 — Frontend:
+
+bashcd frontend
+npm run dev
+Depois acessa http://localhost:5173 e loga com teste@email.com / 123456.
+
+⚠️ Salva esse MONGO_URI em algum lugar, você vai precisar dele toda vez que iniciar o note-service.

@@ -1,0 +1,13 @@
+Metodologia FDD
+
+
+Desenvolver um modelo geral do programa (Pode usar o bonequinho indo la no sistema fazendo a requisição, depois a requisição acessando o banco e tal...).
+-Usar:
+    - Diagrama de classe e Diagrama de sequência
+
+Construir uma lista de funcionalidades
+
+
+Planejar pr Funcionalidades
+    -Kanban
+

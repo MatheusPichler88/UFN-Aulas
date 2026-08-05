@@ -1,0 +1,51 @@
+Exercício 1: Compile e execute o código a seguir, nomeando o fonte como processo.c.
+Quais os valores de PID para cada processo?
+Identifique a finalidade de cada chamada ao sistema utilizada.
+
+Processo Pai - para o PAI o fork devolveu 34018
+Processo Pai - PID = 34017
+Processo filho - para o FILHO o fork devolveu 0
+Processo filho - PID = 34018
+
+
+Exercício 2: Compile e execute o código a seguir, nomeando o fonte como processo2.c.
+Como acontece a execução deste código?
+
+Processo filho - PID = 34036
+x = 100Filho executou a funcao f1 do Pai...
+Processo Pai - PID = 34035
+x = 50Pai executou a funcao f1...
+
+
+Exercício 3: Compile e execute o código a seguir, nomeando o fonte como processo3.c
+Obs.: na função execl, o primeiro argumento indica o caminho e o nome do arquivo a ser executado; os demais são argumentos que podem ser passados ao programa chamado.
+Identifique as chamadas ao sistema utilizadas
+Teste o código
+Verifique a execução do programa, comentando a linha exit(0)
+Verifique a execução do programa, comentando a linha wait(NULL)
+Teste a função execl para um outro código existente.
+
+Processo3.c: Processo filho - PID = 34940
+Processo filho - PID = 34941
+x = 100Filho executou a funcao f1 do Pai...
+Processo Pai - PID = 34940
+x = 50Pai executou a funcao f1...
+Processo3.c: Processo Pai - PID = 34939
+
+
+
+
+Exercício 4: Quantos processos são criados no exemplo abaixo? Justifique.
+
+PID = 34649
+PID = 34651
+PID = 34650
+PID = 34652
+
+
+Exercício 5: Execute o código abaixo e verifique o valor da variável s em cada um dos processos. Os processos ocupam o mesmo espaço
+ de endereçamento? Justifique.
+Processo filho, s = 10
+Filho terminou a execução!
+Processo pai, s = 0
+

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doadores - Museu Treze de Maio</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f8f5f;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #1f8f5f;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 1px solid #0b3d2e;
+            padding-bottom: 10px;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #1f8f5f;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .container {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        label {
+            font-weight: bold;
+            color: #d9d9d9;
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            border: 1px solid #0b3d2e;
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border: 1px solid #1f8f5f;
+            box-shadow: 0px 0px 5px #1f8f5f;
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+        select option { background-color: #121212; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #0b3d2e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #1f8f5f; }
+
+        .consulta {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input { margin: 0; flex: 1; }
+        .search-bar button { width: auto; padding: 12px 20px; font-size: 14px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead tr { background-color: #0b3d2e; }
+
+        thead th {
+            color: #d9d9d9;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #222;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover { background-color: #202020; }
+
+        tbody td {
+            padding: 10px;
+            color: #d9d9d9;
+        }
+
+        .tipo-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .tipo-pf { background-color: #1f8f5f22; color: #1f8f5f; border: 1px solid #1f8f5f; }
+        .tipo-pj { background-color: #5a6fb522; color: #8aafff; border: 1px solid #8aafff; }
+
+        .nome-truncate {
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .acoes { display: flex; gap: 8px; }
+
+        .btn-editar, .btn-excluir {
+            padding: 5px 12px;
+            border-radius: 5px;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-editar  { background-color: #0b3d2e; color: white; width: auto; }
+        .btn-editar:hover  { background-color: #1f8f5f; }
+        .btn-excluir { background-color: #3d0b0b; color: white; width: auto; }
+        .btn-excluir:hover { background-color: #8f1f1f; }
+    </style>
+</head>
+<body>
+
+<h1>Museu Treze de Maio — Doadores</h1>
+
+<div class="page-grid">
+
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <div class="container">
+        <h2>Cadastro de Doador</h2>
+
+        <p class="mensagem" th:text="${mensagem}"></p>
+
+        <form action="/salvarDoador" method="post">
+
+            <label>Nome / Razão Social:</label>
+            <input type="text" name="nome" placeholder="Nome completo ou razão social">
+
+            <label>Tipo:</label>
+            <select name="tipo">
+                <option value="">Selecione...</option>
+                <option value="PESSOA_FISICA">Pessoa Física</option>
+                <option value="PESSOA_JURIDICA">Pessoa Jurídica</option>
+            </select>
+
+            <label>CPF / CNPJ:</label>
+            <input type="text" name="documento" placeholder="000.000.000-00 ou 00.000.000/0001-00">
+
+            <label>E-mail:</label>
+            <input type="email" name="email" placeholder="contato@exemplo.com">
+
+            <label>Telefone:</label>
+            <input type="text" name="telefone" placeholder="(00) 00000-0000">
+
+            <label>Observações:</label>
+            <textarea name="observacoes" placeholder="Informações adicionais sobre o doador..."></textarea>
+
+            <button type="submit">Cadastrar Doador</button>
+        </form>
+    </div>
+
+    <!-- TABELA DE CONSULTA -->
+    <div class="consulta">
+        <h2>Consulta de Doadores</h2>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar por nome ou documento...">
+            <button type="button">Buscar</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Documento</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- th:each="doador : ${doadores}" -->
+                <tr>
+                    <td class="nome-truncate" title="João da Silva">João da Silva</td>
+                    <td><span class="tipo-badge tipo-pf">Pessoa Física</span></td>
+                    <td>123.456.789-00</td>
+                    <td>joao@email.com</td>
+                    <td>(51) 99999-0001</td>
+                    <td class="acoes">
+                        <button class="btn-editar">Editar</button>
+                        <button class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nome-truncate" title="Família Pereira">Família Pereira</td>
+                    <td><span class="tipo-badge tipo-pf">Pessoa Física</span></td>
+                    <td>987.654.321-00</td>
+                    <td>pereira@email.com</td>
+                    <td>(51) 99999-0002</td>
+                    <td class="acoes">
+                        <button class="btn-editar">Editar</button>
+                        <button class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nome-truncate" title="Instituto Cultural RS">Instituto Cultural RS</td>
+                    <td><span class="tipo-badge tipo-pj">Pessoa Jurídica</span></td>
+                    <td>12.345.678/0001-90</td>
+                    <td>contato@icrs.org.br</td>
+                    <td>(51) 3333-0001</td>
+                    <td class="acoes">
+                        <button class="btn-editar">Editar</button>
+                        <button class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

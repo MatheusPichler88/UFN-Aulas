@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Acervo Histórico - Museu Treze</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f8f5f;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            width: 500px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #1f8f5f;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #d9d9d9;
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            border: 1px solid #0b3d2e;
+            background-color: #121212;
+            color: white;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border: 1px solid #1f8f5f;
+            box-shadow: 0px 0px 5px #1f8f5f;
+        }
+
+        textarea { resize: vertical; min-height: 90px; }
+        select option { background-color: #121212; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #0b3d2e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #1f8f5f; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${item.id != null ? 'Editar Item do Acervo' : 'Cadastro de Acervo Histórico'}">Cadastro de Acervo Histórico</h1>
+
+<div class="container">
+
+    <p class="mensagem" th:text="${mensagem}"></p>
+
+    <form action="/salvarAcervoHistorico" method="post">
+
+        <!-- Campo hidden: presente só na edição -->
+        <input type="hidden" name="id" th:value="${item.id}">
+
+        <label>Tipo do Item:</label>
+        <input type="text" name="tipo_item" placeholder="Ex: Fotografia, Documento, Artefato..." th:value="${item.tipo_item}">
+
+        <label>Descrição:</label>
+        <textarea name="descricao" placeholder="Descreva o item histórico..." th:text="${item.descricao}"></textarea>
+
+        <label>Ano do Item:</label>
+        <input type="number" name="ano_item" placeholder="Ex: 1930" th:value="${item.ano_item}">
+
+        <label>Caminho / Localização do Arquivo:</label>
+        <input type="text" name="caminho_item" placeholder="Ex: /acervo/fotos/item001.jpg" th:value="${item.caminho_item}">
+
+        <label>Doador:</label>
+        <select name="doador_id">
+            <option value="">Selecione um doador...</option>
+            <option th:each="doador : ${doadores}"
+                    th:value="${doador.id}"
+                    th:text="${doador.nome}"
+                    th:selected="${item.doador_id == doador.id}">
+            </option>
+        </select>
+
+        <button type="submit" th:text="${item.id != null ? 'Salvar Alterações' : 'Cadastrar Item'}">Cadastrar Item</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

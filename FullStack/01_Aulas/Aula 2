@@ -1,0 +1,93 @@
+-- View temporárias
+
+WITH resumo_vendas AS (
+SELECT
+    id_produto,
+    SUM(quantidade) AS total_unidades,
+    SUM(quantidade * preco_unitario) AS receita_produto
+FROM itens_pedido
+GROUP BY id_produto
+)
+
+-- Agora coonsultamos a CTE como se fosse uma tabela real
+SELECT
+    p.nome,
+    rv.total_unidades,
+    rv.receita_produto
+FROM produtos p
+JOIN resumo_vendas rv ON p.id_produto = rv.id_produto
+WHERE rv.total_unidades > 5;
+
+
+-- Multiplas view temporárias
+
+with clientes_vip as (
+    select id_cliente, nome
+    from clientes
+    where id_cliente in (select id_cliente from pedidos where total_pedido > 1000)
+),
+pedidos_detalhados as (
+select id_pedido, id_cliente, id_produto, quantidade
+from pedidos 
+    join itens_pedido 
+    using(id_pedido)
+    JOIN clientes_vip VIP
+    
+)
+select 
+    v.nome as clientes_especial,
+    pr.nome as produto_comprado
+from clientes_vip v
+        join pedidos_detalhados pd
+        on v.id_cliente = pd.id_cliente
+        join produtos pr
+        on pd.id_produto - pr.id_produto
+;
+    
+
+-- View de DashBoard 
+
+CREATE OR REPLACE VIEW v_resumo_pedidos AS
+SELECT
+    p.id_pedido,
+    c.nome AS cliente,
+    p.data_pedido,
+    p.status,
+    COUNT(ip.id_item) AS total_itens,
+    p.total_pedido
+FROM pedidos p
+    JOIN clientes c
+    ON p.id_cliente = c.id_cliente
+JOIN itens_pedido ip
+ON p.id_pedido + ip.id_pedido
+GROUP BY p.id_pedido, c.nome, p.data_pedido, p.status, p.total_pedido;
+
+SELECT * FROM v_resumo_pedidos WHERE status = 'Pago';
+
+
+
+-- Recursividade
+WITH RECURSIVE categoria_path AS (
+    SELECT id_categoria, nome, id_pai, CAST(nome AS VARCHAR(2000)) AS caminho
+    FROM categorias
+    WHERE id_pai IS NULL
+
+    UNION ALL
+
+    SELECT c.id_categoria, c.nome, c.id_pai,
+           CONCAT(cp.caminho, ' > ', c.nome)
+    FROM categorias c
+    INNER JOIN categoria_path cp
+    ON c.id_pai = cp.id_categoria
+)
+
+SELECT * FROM categoria_path
+ORDER BY caminho;
+
+
+
+
+
+
+
+

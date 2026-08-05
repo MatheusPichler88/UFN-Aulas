@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Museu Treze de Maio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 220px;
+            min-height: 100vh;
+            background-color: #111;
+            border-right: 2px solid #0b3d2e;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            padding: 0 20px 30px;
+            border-bottom: 1px solid #0b3d2e;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo h2 {
+            color: #1f8f5f;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-logo span {
+            color: #555;
+            font-size: 12px;
+        }
+
+        .nav-section {
+            padding: 0 14px;
+            margin-bottom: 10px;
+        }
+
+        .nav-label {
+            color: #444;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 10px 8px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background-color: #0b3d2e44;
+            color: #1f8f5f;
+        }
+
+        .nav-item.active {
+            background-color: #0b3d2e;
+            color: #1f8f5f;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 20px 14px 0;
+            border-top: 1px solid #0b3d2e;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background-color: #1a1a1a;
+            border: 1px solid #0b3d2e;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f8f5f;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            color: #d9d9d9;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-perfil {
+            color: #1f8f5f;
+            font-size: 11px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 10px;
+            background-color: #3d0b0b;
+            color: #d9d9d9;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-logout:hover { background-color: #8f1f1f; color: white; }
+
+        /* ── MAIN ── */
+        .main {
+            margin-left: 220px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 36px;
+        }
+
+        .page-header h1 {
+            color: #1f8f5f;
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* ── CONTADORES ── */
+        .contadores {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card-contador {
+            background-color: #1a1a1a;
+            border: 2px solid #0b3d2e;
+            border-radius: 12px;
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.4);
+            transition: 0.2s;
+        }
+
+        .card-contador:hover {
+            border-color: #1f8f5f;
+            box-shadow: 0 0 18px rgba(31,143,95,0.15);
+        }
+
+        .contador-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background-color: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .contador-info {}
+
+        .contador-valor {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .contador-label {
+            color: #888;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ── AÇÕES RÁPIDAS ── */
+        .secao-titulo {
+            color: #1f8f5f;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #0b3d2e;
+        }
+
+        .acoes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card-acao {
+            background-color: #1a1a1a;
+            border: 2px solid #0b3d2e;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.4);
+        }
+
+        .card-acao h3 {
+            color: #d9d9d9;
+            font-size: 15px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-acao h3 span {
+            font-size: 18px;
+        }
+
+        .btn-acao-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-acao {
+            flex: 1;
+            padding: 11px 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .btn-cadastrar {
+            background-color: #0b3d2e;
+            color: #1f8f5f;
+            border: 1px solid #1f8f5f44;
+        }
+
+        .btn-cadastrar:hover {
+            background-color: #1f8f5f;
+            color: white;
+        }
+
+        .btn-consultar {
+            background-color: #1a1a1a;
+            color: #aaa;
+            border: 1px solid #333;
+        }
+
+        .btn-consultar:hover {
+            background-color: #222;
+            color: #d9d9d9;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="sidebar-logo">
+        <h2>Museu Treze de Maio</h2>
+        <span>Sistema de Gestão</span>
+    </div>
+
+    <nav class="nav-section">
+        <div class="nav-label">Principal</div>
+        <a href="/dashboard" class="nav-item active">
+            <span class="nav-icon">⊞</span> Dashboard
+        </a>
+    </nav>
+
+    <nav class="nav-section">
+        <div class="nav-label">Acervo</div>
+        <a href="/consultaAcervoHistorico" class="nav-item">
+            <span class="nav-icon">🏛</span> Acervo Histórico
+        </a>
+        <a href="/consultaLivro" class="nav-item">
+            <span class="nav-icon">📚</span> Livros
+        </a>
+    </nav>
+
+    <nav class="nav-section">
+        <div class="nav-label">Cadastros</div>
+        <a href="/consultaDoador" class="nav-item">
+            <span class="nav-icon">🤝</span> Doadores
+        </a>
+        <!-- Visível somente para ADMINISTRADOR: th:if="${perfil == 'ADMINISTRADOR'}" -->
+        <a href="/consultaUsuario" class="nav-item">
+            <span class="nav-icon">👤</span> Usuários
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="user-avatar" th:text="${#strings.substring(usuario.nome, 0, 1)}">M</div>
+            <div>
+                <div class="user-name" th:text="${usuario.nome}">Maria Silva</div>
+                <div class="user-perfil" th:text="${usuario.perfil}">ADMINISTRADOR</div>
+            </div>
+        </div>
+        <a href="/logout" class="btn-logout">Sair</a>
+    </div>
+
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <div class="page-header">
+        <h1>Dashboard</h1>
+        <p th:text="'Bem-vindo, ' + ${usuario.nome} + '. Aqui está um resumo do sistema.'">
+            Bem-vindo. Aqui está um resumo do sistema.
+        </p>
+    </div>
+
+    <!-- CONTADORES -->
+    <div class="contadores">
+
+        <div class="card-contador">
+            <div class="contador-icon">📚</div>
+            <div class="contador-info">
+                <div class="contador-valor" th:text="${totalLivros}">0</div>
+                <div class="contador-label">Livros</div>
+            </div>
+        </div>
+
+        <div class="card-contador">
+            <div class="contador-icon">🏛</div>
+            <div class="contador-info">
+                <div class="contador-valor" th:text="${totalItens}">0</div>
+                <div class="contador-label">Itens do Acervo</div>
+            </div>
+        </div>
+
+        <div class="card-contador">
+            <div class="contador-icon">🤝</div>
+            <div class="contador-info">
+                <div class="contador-valor" th:text="${totalDoadores}">0</div>
+                <div class="contador-label">Doadores</div>
+            </div>
+        </div>
+
+        <div class="card-contador">
+            <div class="contador-icon">👤</div>
+            <div class="contador-info">
+                <div class="contador-valor" th:text="${totalUsuarios}">0</div>
+                <div class="contador-label">Usuários</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AÇÕES RÁPIDAS -->
+    <div class="secao-titulo">Ações Rápidas</div>
+
+    <div class="acoes-grid">
+
+        <div class="card-acao">
+            <h3><span>📚</span> Livros</h3>
+            <div class="btn-acao-group">
+                <a href="/cadastroLivro" class="btn-acao btn-cadastrar">+ Cadastrar</a>
+                <a href="/consultaLivro" class="btn-acao btn-consultar">Consultar</a>
+            </div>
+        </div>
+
+        <div class="card-acao">
+            <h3><span>🏛</span> Acervo Histórico</h3>
+            <div class="btn-acao-group">
+                <a href="/cadastroAcervoHistorico" class="btn-acao btn-cadastrar">+ Cadastrar</a>
+                <a href="/consultaAcervoHistorico" class="btn-acao btn-consultar">Consultar</a>
+            </div>
+        </div>
+
+        <div class="card-acao">
+            <h3><span>🤝</span> Doadores</h3>
+            <div class="btn-acao-group">
+                <a href="/cadastroDoador" class="btn-acao btn-cadastrar">+ Cadastrar</a>
+                <a href="/consultaDoador" class="btn-acao btn-consultar">Consultar</a>
+            </div>
+        </div>
+
+        <!-- Visível somente para ADMINISTRADOR -->
+        <div class="card-acao" th:if="${usuario.perfil == 'ADMINISTRADOR'}">
+            <h3><span>👤</span> Usuários</h3>
+            <div class="btn-acao-group">
+                <a href="/cadastroUsuario" class="btn-acao btn-cadastrar">+ Cadastrar</a>
+                <a href="/consultaUsuario" class="btn-acao btn-consultar">Consultar</a>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

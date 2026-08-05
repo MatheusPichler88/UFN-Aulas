@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuários - Museu Treze</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f8f5f;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #1f8f5f;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 1px solid #0b3d2e;
+            padding-bottom: 10px;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #1f8f5f;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* ── Layout de duas colunas ── */
+        .page-grid {
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        /* ── Formulário de Cadastro ── */
+        .container {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        label {
+            font-weight: bold;
+            color: #d9d9d9;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            border: 1px solid #0b3d2e;
+            background-color: #121212;
+            color: white;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border: 1px solid #1f8f5f;
+            box-shadow: 0px 0px 5px #1f8f5f;
+        }
+
+        select option { background-color: #121212; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #0b3d2e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #1f8f5f; }
+
+        /* ── Tabela de Consulta ── */
+        .consulta {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.6);
+            border: 2px solid #0b3d2e;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            margin: 0;
+            flex: 1;
+        }
+
+        .search-bar button {
+            width: auto;
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead tr {
+            background-color: #0b3d2e;
+        }
+
+        thead th {
+            color: #d9d9d9;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #222;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover { background-color: #202020; }
+
+        tbody td {
+            padding: 10px;
+            color: #d9d9d9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-admin    { background-color: #1f8f5f22; color: #1f8f5f; border: 1px solid #1f8f5f; }
+        .badge-func     { background-color: #2a6db522; color: #5aafff; border: 1px solid #5aafff; }
+        .badge-visit    { background-color: #88888822; color: #aaa;    border: 1px solid #555; }
+
+        .ativo-sim { color: #1f8f5f; font-weight: bold; }
+        .ativo-nao { color: #cc4444; font-weight: bold; }
+
+        .acoes { display: flex; gap: 8px; }
+
+        .btn-editar, .btn-excluir {
+            padding: 5px 12px;
+            border-radius: 5px;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-editar  { background-color: #0b3d2e; color: white; }
+        .btn-editar:hover  { background-color: #1f8f5f; }
+        .btn-excluir { background-color: #3d0b0b; color: white; }
+        .btn-excluir:hover { background-color: #8f1f1f; }
+
+        .sem-dados {
+            text-align: center;
+            color: #555;
+            padding: 30px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Museu Treze — Gestão de Usuários</h1>
+
+<div class="page-grid">
+
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <div class="container">
+        <h2>Cadastro de Usuário</h2>
+
+        <p class="mensagem" th:text="${mensagem}"></p>
+
+        <form action="/salvarUsuario" method="post">
+
+            <label>Nome:</label>
+            <input type="text" name="nome" placeholder="Nome completo">
+
+            <label>E-mail:</label>
+            <input type="email" name="email" placeholder="email@exemplo.com">
+
+            <label>Senha:</label>
+            <input type="password" name="senha" placeholder="••••••••">
+
+            <label>Telefone:</label>
+            <input type="text" name="telefone" placeholder="(00) 00000-0000">
+
+            <label>Perfil:</label>
+            <select name="perfil">
+                <option value="">Selecione...</option>
+                <option value="ADMINISTRADOR">Administrador</option>
+                <option value="FUNCIONARIO">Funcionário</option>
+                <option value="VISITANTE">Visitante</option>
+            </select>
+
+            <label>Data de Cadastro:</label>
+            <input type="date" name="data_cadastro">
+
+            <label>Ativo:</label>
+            <select name="ativo">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+            </select>
+
+            <button type="submit">Cadastrar Usuário</button>
+        </form>
+    </div>
+
+    <!-- TABELA DE CONSULTA -->
+    <div class="consulta">
+        <h2>Consulta de Usuários</h2>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar por nome ou e-mail...">
+            <button type="button">Buscar</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Perfil</th>
+                    <th>Ativo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Thymeleaf: th:each="usuario : ${usuarios}" -->
+                <tr>
+                    <td>Maria Silva</td>
+                    <td>maria@museu.com</td>
+                    <td>(51) 99999-0001</td>
+                    <td><span class="badge badge-admin">ADMINISTRADOR</span></td>
+                    <td><span class="ativo-sim">Sim</span></td>
+                    <td class="acoes">
+                        <button class="btn-editar">Editar</button>
+                        <button class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>João Pereira</td>
+                    <td>joao@museu.com</td>
+                    <td>(51) 99999-0002</td>
+                    <td><span class="badge badge-func">FUNCIONÁRIO</span></td>
+                    <td><span class="ativo-sim">Sim</span></td>
+                    <td class="acoes">
+                        <button class="btn-editar">Editar</button>
+                        <button class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ana Souza</td>
+                    <td>ana@email.com</td>
+                    <td>(51) 99999-0003</td>
+                    <td><span class="badge badge-visit">VISITANTE</span></td>
+                    <td><span class="ativo-nao">Não</span></td>
+                    <td class="acoes">
+                        <button class="btn-editar">Editar</button>
+                        <button class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
