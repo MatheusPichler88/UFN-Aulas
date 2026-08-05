@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+int base, altura , area,idade, ano, ano_de_nascimento;
+float raio, area_do_circulo;
+float pi= 3.14;
+
+
+//1) Faça um algoritmo para o calculo da área de um retângulo.
+
+printf("Calculo da area de um retangulo: \n \n" );
+printf("Digite um valor para a base: ");
+scanf("%d", &base);
+
+printf("Digite um valor para a altura: ");
+scanf("%d", &altura);
+
+area= base*altura;
+
+printf("O valor da area de um retangulo eh: %d\n\n\n", area);
+
+//2) Faça um algoritmo para calcular a área de um triângulo retângulo.
+
+printf("Calculo da area de um triangulo retangulo: \n \n" );
+printf("Digite um valor para a base: ");
+scanf("%d", &base);
+
+printf("Digite um valor para a altura: ");
+scanf("%d", &altura);
+
+area= base*altura/2;
+
+printf("O valor da area de um triangulo retangulo eh: %d\n\n", area);
+
+
+
+//3) Escreva um algoritmo para calcular a área de um círculo, com base em um raio digitado pelo usuário.
+
+
+printf("Digite o valor do raio do circulo: ");
+scanf("%f", &raio);
+
+area_do_circulo = pi * raio * raio;
+
+printf("A area do circulo eh: %f\n\n", area_do_circulo);
+
+
+//4) Escreva um algoritmo que leia a idade de uma pessoa, e então mostre na tela o ano em que ela nasceu.
+printf("Em que ano estamos? ");
+scanf("%d", &ano);
+
+printf("Digite sua idade completada no ano presente: ");
+scanf("%d", &idade);
+
+ ano_de_nascimento = ano - idade;
+
+ printf("O seu ano de nascimento eh: %d\n", ano_de_nascimento);
+    return 0;
+}
+

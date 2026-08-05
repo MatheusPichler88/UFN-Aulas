@@ -1,0 +1,70 @@
+Exercicio 1
+
+
+Algoritmo ler_numero
+
+numero 1, numero 2, subtrair
+
+Inicio
+
+Ler (numero 1)
+Ler (numero 2)
+
+subtrair = (numero1-numero2)
+
+Mostra (subtrair)
+
+Fim
+
+Exercicio 2
+
+Algoritmo media
+
+nota1, nota2, nota3, media
+
+Inicio
+
+media= (nota1+nota2+nota3)/3;
+
+Se (media >=0 e <=4.9)
+	mostrar_na_tela ("aluno em recuperação")
+se (media >= 5 e <= 6,9)
+	mostra_na_tela ("aluno em prova final")
+se (media >=7 e <=10)
+	mostra_na_tela ("aluno passa por media")
+Fim
+
+
+Exercicio 3
+
+Algoritmo Area
+
+base, altura, area
+
+Inicio
+
+area= (altura*base)/2
+
+mostrar_na_tela (area)
+
+Fim
+
+Exercicio 4
+
+
+Algoritmo areaN0
+
+base, altura, area
+
+Inicio
+
+area= (altura*base)/2
+se (base e altura != 0)
+	mostrar(area)
+
+Fim
+
+
+
+
+
